@@ -7,25 +7,15 @@ import {
 } from '@livekit/components-react';
 import { BackgroundBlur, VirtualBackground } from '@livekit/track-processors';
 import { isLocalTrack, LocalTrackPublication, Track } from 'livekit-client';
-import Desk from '../public/background-images/samantha-gades-BlIhVfXbi9s-unsplash.jpg';
-import Nature from '../public/background-images/ali-kazal-tbw_KQE3Cbg-unsplash.jpg';
-
-// Background image paths
-const BACKGROUND_IMAGES = [
-  { name: 'Desk', path: Desk },
-  { name: 'Nature', path: Nature },
-];
 
 // Background options
-type BackgroundType = 'none' | 'blur' | 'image';
+type BackgroundType = 'none' | 'blur';
 
 export function CameraSettings() {
   const { cameraTrack, localParticipant } = useLocalParticipant();
   const [backgroundType, setBackgroundType] = React.useState<BackgroundType>(
     (cameraTrack as LocalTrackPublication)?.track?.getProcessor()?.name === 'background-blur'
       ? 'blur'
-      : (cameraTrack as LocalTrackPublication)?.track?.getProcessor()?.name === 'virtual-background'
-      ? 'image'
       : 'none',
   );
 
@@ -39,9 +29,9 @@ export function CameraSettings() {
 
   const selectBackground = (type: BackgroundType, imagePath?: string) => {
     setBackgroundType(type);
-    if (type === 'image' && imagePath) {
+    if (imagePath) {
       setVirtualBackgroundImagePath(imagePath);
-    } else if (type !== 'image') {
+    } else {
       setVirtualBackgroundImagePath(null);
     }
   };
@@ -50,7 +40,7 @@ export function CameraSettings() {
     if (isLocalTrack(cameraTrack?.track)) {
       if (backgroundType === 'blur') {
         cameraTrack.track?.setProcessor(BackgroundBlur());
-      } else if (backgroundType === 'image' && virtualBackgroundImagePath) {
+      } else if (virtualBackgroundImagePath) {
         cameraTrack.track?.setProcessor(VirtualBackground(virtualBackgroundImagePath));
       } else {
         cameraTrack.track?.stopProcessor();
@@ -131,38 +121,6 @@ export function CameraSettings() {
             </span>
           </button>
 
-          {BACKGROUND_IMAGES.map((image) => (
-            <button
-              key={image.path.src}
-              onClick={() => selectBackground('image', image.path.src)}
-              className="lk-button"
-              aria-pressed={
-                backgroundType === 'image' && virtualBackgroundImagePath === image.path.src
-              }
-              style={{
-                backgroundImage: `url(${image.path.src})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width: '80px',
-                height: '60px',
-                border:
-                  backgroundType === 'image' && virtualBackgroundImagePath === image.path.src
-                    ? '2px solid #0090ff'
-                    : '1px solid #d1d1d1',
-              }}
-            >
-              <span
-                style={{
-                  backgroundColor: 'rgba(0,0,0,0.6)',
-                  padding: '2px 5px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                }}
-              >
-                {image.name}
-              </span>
-            </button>
-          ))}
         </div>
       </div>
     </div>
