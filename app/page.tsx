@@ -52,11 +52,24 @@ function DemoMeetingTab(props: { label: string }) {
       router.push(`/rooms/${generateRoomId()}`);
     }
   };
+  // start meeting with voice agent
+  const startWithAgent = async () => {
+    const res = await fetch('/api/agents', {
+      method: 'POST',
+      headers: {'content-type':'application/json'},
+      body: JSON.stringify({ agentName: 'voice-agent' }),
+    });
+    const { room, userToken } = await res.json();
+    router.push(`/rooms/${room}?token=${userToken}`);
+  };
   return (
     <div className={styles.tabContent}>
       <p style={{ margin: 0 }}>Try LiveKit Meet for free with our live demo project.</p>
       <button style={{ marginTop: '1rem' }} className="lk-button" onClick={startMeeting}>
         Start Meeting
+      </button>
+      <button style={{ marginTop: '1rem' }} className="lk-button" onClick={startWithAgent}>
+        Start with Agent
       </button>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
