@@ -54,11 +54,14 @@ function DemoMeetingTab(props: { label: string }) {
   };
   // start meeting with voice agent
   const startWithAgent = async () => {
-    const res = await fetch('/api/agents', {
-      method: 'POST',
-      headers: {'content-type':'application/json'},
-      body: JSON.stringify({ agentName: 'voice-agent' }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/agents`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentName: 'voice-agent' }),
+      }
+    );
     const { room, userToken } = await res.json();
     router.push(`/rooms/${room}?token=${userToken}`);
   };
