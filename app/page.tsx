@@ -54,15 +54,14 @@ function DemoMeetingTab(props: { label: string }) {
   };
   // start meeting with voice agent
   const startWithAgent = async () => {
-    // generate a new meeting room and dispatch an agent
-    const room = generateRoomId();
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/agents`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/join`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ room }),
+      // send a room if you want to keep generateRoomId(); otherwise omit body
+      body: JSON.stringify({ room: generateRoomId() }),
     });
-    const { room: resRoom, token } = await res.json();
-    router.push(`/rooms/${resRoom}?token=${token}`);
+    const { room, userJwt } = await res.json();
+    router.push(`/rooms/${room}?token=${userJwt}`);
   };
   return (
     <div className={styles.tabContent}>
