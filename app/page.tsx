@@ -54,14 +54,26 @@ function DemoMeetingTab(props: { label: string }) {
   };
   // start meeting with voice agent
   const startWithAgent = async () => {
+    // single source of truth for agent UUID
+    const AGENT_ID = '550e8400-e29b-41d4-a716-446655440000';
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/join`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // send a room if you want to keep generateRoomId(); otherwise omit body
-      body: JSON.stringify({ room: generateRoomId() }),
+      /**
+       * Let the backend:
+       *   • create (or reuse) the room
+       *   • mint a LiveKit JWT for the visitor
+       *   • include AGENT_ID in the JWT's metadata OR echo it back for the client
+       */
+      body: JSON.stringify({
+        room: generateRoomId(),
+        agent_id: AGENT_ID,          // <-- server stores this in Job.metadata
+      }),
     });
     const { room, userJwt } = await res.json();
-    router.push(`/rooms/${room}?token=${userJwt}`);
+    // attach agent_id as a query param so the /rooms/[id] page can forward it
+    router.push(`/rooms/${room}?token=${userJwt}&agent_id=${AGENT_ID}`);
   };
   return (
     <div className={styles.tabContent}>
