@@ -55,7 +55,7 @@ function DemoMeetingTab(props: { label: string }) {
   // start meeting with voice agent
   const startWithAgent = async () => {
     // single source of truth for agent UUID
-    const AGENT_ID = '550e8400-e29b-41d4-a716-446655440000';
+    const AGENT_ID = '534172dd-9b38-40d5-9d07-8d2d01f8e2c0';
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/join`, {
       method: 'POST',
